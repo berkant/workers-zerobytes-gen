@@ -1,4 +1,5 @@
-const buffer = new ArrayBuffer(1000 ** 2);
+const buffer = new ArrayBuffer(10 * 1000 ** 2);
+const minBytes = 1;
 
 addEventListener("fetch", evt => {
     evt.respondWith(handleRequest(evt.request));
@@ -8,8 +9,8 @@ function handleRequest(req) {
     const params = new URL(req.url).searchParams;
 
     let bytes = parseInt(params.get("bytes"), 10);
-    if (bytes < 1) {
-        return new Response("Ensure bytes >= 1.", {
+    if (bytes < minBytes) {
+        return new Response(`Ensure bytes >= ${minBytes}.`, {
             status: 400
         });
     }
