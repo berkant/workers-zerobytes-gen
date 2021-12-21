@@ -1,16 +1,17 @@
 const buffer = new ArrayBuffer(10 * 1000 ** 2);
-const minBytes = 1;
 
 addEventListener("fetch", evt => {
     evt.respondWith(handleRequest(evt.request));
 });
 
 function handleRequest(req) {
-    const params = new URL(req.url).searchParams;
+    const {
+        searchParams: params
+    } = new URL(req.url);
 
     let bytes = parseInt(params.get("bytes"), 10);
-    if (bytes < minBytes) {
-        return new Response(`Ensure bytes >= ${minBytes}.`, {
+    if (bytes <= 0) {
+        return new Response("bytes must be positive.", {
             status: 400
         });
     }
@@ -21,15 +22,15 @@ function handleRequest(req) {
     } = new TransformStream();
 
     const writer = writable.getWriter();
-    while (bytes > 0) {
+    while (true) {
         const isFinalWrite = bytes < buffer.byteLength;
         if (isFinalWrite) {
             writer.write(buffer.slice(0, bytes));
-            bytes = 0;
-        } else {
-            writer.write(buffer);
-            bytes -= buffer.byteLength;
+            break;
         }
+
+        writer.write(buffer);
+        bytes -= buffer.byteLength;
     }
 
     return new Response(readable);
