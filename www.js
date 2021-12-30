@@ -10,7 +10,7 @@ function handleRequest(req) {
     } = new URL(req.url);
 
     let bytes = parseInt(params.get("bytes"), 10);
-    if (bytes <= 0) {
+    if (Number.isInteger(bytes) && bytes <= 0) {
         return new Response("bytes must be positive.", {
             status: 400
         });
