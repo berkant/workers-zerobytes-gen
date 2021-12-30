@@ -9,8 +9,8 @@ function handleRequest(req) {
         searchParams: params
     } = new URL(req.url);
 
-    let bytes = parseInt(params.get("bytes"), 10);
-    if (Number.isInteger(bytes) && bytes <= 0) {
+    let bytes = parseInt(params.get("bytes"), 10) || 0;
+    if (bytes <= 0) {
         return new Response("bytes must be positive.", {
             status: 400
         });
